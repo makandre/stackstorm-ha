@@ -91,14 +91,66 @@ st2:
       core.yaml: |
         ---
         # example core pack config yaml
-
+      github.yaml: |
+        ---
+        token: ""
+        user: "makandre"
+        password: "P4ssw0rd"
+        github_type: "online"
+        web_url: "https://github.com"
+        base_url: "https://github.com/api/v3"
+        deployment_environment: "production"
+        repository_sensor:
+          event_type_whitelist:
+            - "IssuesEvent"
+            - "IssueCommentEvent"
+            - "ForkEvent"
+            - "WatchEvent"
+            - "ReleaseEvent"
+            - "PushEvent"
+          repositories:
+            - user: "makandre"
+              name: "test001"
+            - user: "makandre"
+              name: "test002"
+          count: 30  # Maximum number of old events to retrieve
+        activity_sensor:
+          event_type_whitelist:
+            - "IssuesEvent"
+            - "IssueCommentEvent"
+            - "ForkEvent"
+            - "WatchEvent"
+            - "ReleaseEvent"
+            - "PushEvent"
+          count: 30
+      kafka.yaml: |
+        ---
+        # Used by the produce action
+        client_id: st2-kafka-producer
+        hosts: 150.238.231.56:31618
+        # Used for the kafka sensor
+        message_sensor:
+          client_id: testclientID
+          group_id: testgroupID
+          hosts: 150.238.231.56:31618
+          topics:
+          - test
+          - actions
+          - juno
+        # Used by the gcp kafka sensor
+        gcp_message_sensor:
+          client_id: st2gcpclient
+          group_id: st2gcpgroup
+          hosts: 150.238.231.56:31618
+          topics:
+          - gcp_stackdriver_topic
     # Custom packs image settings. The repository, name, tag and pullPolicy for this image
     # are specified below.
     image:
       # Uncomment the following block to make the custom packs image available to the necessary pods
-      #repository: your-remote-docker-registry.io
-      name: st2packs
-      tag: latest
+      repository: docker.io
+      name: makandre/st2packs
+      tag: 816
       pullPolicy: Always
       # Optional name of the imagePullSecret if your custom packs image is hosted by a private Docker registry behind the auth
       #pullSecret: st2packs-auth
@@ -389,7 +441,7 @@ st2garbagecollector:
 ##
 st2chatops:
   # Enable st2chatops (default: false)
-  enabled: false
+  enabled: true
   # Custom hubot adapter ENV variables to pass through which will override st2chatops.env defaults.
   # See https://github.com/StackStorm/st2chatops/blob/master/st2chatops.env
   # for the full list of supported adapters and example ENV variables.
